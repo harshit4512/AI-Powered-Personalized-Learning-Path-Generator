@@ -12,9 +12,15 @@ const assessmentSchema=new mongoose.Schema(
             type:String,
             required:[true,"Goal is required"],
             trim:true,
-              // free text for now
-      // example: "Learn React"
-      // we will add dropdown/enum later
+             enum: [
+        "Full Stack Development",
+        "Data Science",
+        "DSA & Competitive Programming",
+        "Android Development",
+        "DevOps & Cloud",
+      ],
+      // only 5 goals for now
+      // more will be added later
         },
 
         targetWeeks:{
