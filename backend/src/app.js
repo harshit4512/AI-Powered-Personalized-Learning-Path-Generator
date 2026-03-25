@@ -2,12 +2,16 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import helmet from "helmet"
-
+import cookieParser from "cookie-parser"
 // errorHandler is needed right now
 // because app.js uses it at the bottom
 
 import { errorHandler } from "./middleware/errorHandler.middleware.js"
-
+import authRoutes from "./routes/auth.routes.js"
+// ================================
+// ROUTES IMPORTS
+// uncomment as you build each feature
+// ================================
 // loads your .env file into process.env
 dotenv.config()
 
@@ -44,6 +48,13 @@ app.use(express.json({ limit: "10kb" }));
 // allows reading form data sent from frontend
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
+// ================================
+// COOKIE PARSER
+// must be after body parsing
+// must be before routes
+// so req.cookies works in every controller
+// ================================
+app.use(cookieParser(process.env.COOKIE_SECRET))
 
 // hit http://localhost:5000/api/health to verify
 // server + database are both running correctly
@@ -56,6 +67,16 @@ app.get("/api/health",(req,res)=>{
         timestamp: new Date().toISOString(),
     });
 });
+
+// ================================
+// ROUTES
+// uncomment each route only when
+// you have built that feature
+// ================================
+
+// --- active now ---
+app.use("/api/auth", authRoutes)
+
 
 
 // ================================

@@ -1,13 +1,13 @@
 import mongoose from "mongoose"
-import bcrypt from "bcrypt.js"
+import bcrypt from "bcryptjs"
 
-const userschema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 
     name:{
         type:String,
         required:[true,"Name is required"],
         trim:true,
-        minlength:[2,"Nmae must be at least 2 characters"],
+        minlength:[2,"Name must be at least 2 characters"],
         maxlength:[50,"Name cannot exceed 50 characters"],
     },
 
@@ -81,16 +81,16 @@ const userschema = new mongoose.Schema({
 // only runs if password was changed
 // ================================
 
-userschema.schema.pre("save",async function(next){
+userSchema.pre("save",async function(){
     // skip if password not changed
 
-    if(!this.isModified("password"))  return next();
+    if(!this.isModified("password"))  return ;
 
      // skip if no password — Google auth users
-    if (!this.password) return next();
+    if (!this.password) return ;
 // hash with 10 salt rounds — industry standard
     this.password=await bcrypt.hash(this.password,10);
-    next();
+    
 });
 
 
@@ -99,7 +99,7 @@ userschema.schema.pre("save",async function(next){
 // usage: await user.comparePassword("entered123")
 // ================================
 
-userschema.methods.comparePassword=async function(enteredPassword){
+userSchema.methods.comparePassword=async function(enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password)
 };
 
