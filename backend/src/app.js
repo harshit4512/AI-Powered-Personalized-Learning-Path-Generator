@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import helmet from "helmet"
 import cookieParser from "cookie-parser"
+import passport from "./config/passport.js"
 // errorHandler is needed right now
 // because app.js uses it at the bottom
 
@@ -54,7 +55,12 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 // must be before routes
 // so req.cookies works in every controller
 // ================================
-app.use(cookieParser(process.env.COOKIE_SECRET))
+app.use(cookieParser())
+
+
+// initialize passport
+// no session needed because we use JWT cookies
+app.use(passport.initialize())
 
 // hit http://localhost:5000/api/health to verify
 // server + database are both running correctly

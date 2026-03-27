@@ -1,7 +1,7 @@
 import User from "../models/User.model.js"
 
 import { generateAccessToken, generateRefreshToken, setTokenCookies } from "../utils/generateToken.js"
-
+import passport from "../config/passport.js"
 import { registerSchema, loginSchema } from "../validators/auth.validator.js"
 
 import jwt from "jsonwebtoken"
@@ -247,11 +247,76 @@ const getMe = async (req, res) => {
     }
 };
 
+// ================================
+// GOOGLE AUTH INITIATE
+// GET /api/auth/google
+// this route redirects user to google
+// ================================
 
-export{
+const googleAuth = passport.authenticate("google", {
+    scope: ["profile", "email"],
+    // asking google for:
+    // profile → name and avatar
+    // email   → email address
+    session: false,
+    // no session because we use cookies
+})
+
+// ================================
+// GOOGLE AUTH CALLBACK
+// GET /api/auth/google/callback
+// google redirects here after user approves
+// ================================
+
+const googleAuthCallback = async (req, res) => {
+    try {
+        // req.user is set by passport strategy
+        // after google sends back user info
+
+        const user = req.user
+
+        if (!user) {
+            return res.redirect(
+                `${process.env.CLIENT_URI}/login?error=google_auth_failed`
+            )
+        }
+
+        // generate tokens
+        const accessToken = generateAccessToken(user._id)
+        const refreshToken = generateRefreshToken(user._id)
+
+        // save refresh token to database
+        user.refreshToken = refreshToken
+        await user.save({ validateBeforeSave: false })
+
+        // set cookies
+        setTokenCookies(res, accessToken, refreshToken)
+
+        // redirect to frontend dashboard
+        // google auth always redirects
+        // cannot send JSON response here
+        return res.status(200).json({
+            success: true,
+            message: "Google login successful",
+            accessToken,
+            refreshToken,
+            user
+        })
+
+    }
+    catch (error) {
+        return res.redirect(
+            `${process.env.FRONTEND_URL}/login?error=server_error`
+        )
+    }
+
+}
+export {
     register,
     login,
     logout,
     refreshToken,
-    getMe
+    getMe,
+    googleAuth,
+    googleAuthCallback
 }

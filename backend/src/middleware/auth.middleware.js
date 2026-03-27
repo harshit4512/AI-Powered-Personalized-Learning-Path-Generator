@@ -13,10 +13,13 @@ const verifyToken = async (req, res, next) => {
                 message: "Not logged in. please login first",
             });
         }
-
+         
+        
+        
         //verify token
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
+        
         // find user
 
         const user = await User.findById(decoded.id);
@@ -28,18 +31,16 @@ const verifyToken = async (req, res, next) => {
             });
         }
 
-        if (!user.isActive) {
-            return res.status(401).json({
-                success: false,
-                message: "Account is deactivated",
-            });
-        }
+        
+        
 
         // attach user to request
         req.user = user;
         next();
     }
     catch (error) {
+        console.log(error);
+        
         return res.status(401).json({
             success: false,
             message: "Invalid or expired token. Please login again",
