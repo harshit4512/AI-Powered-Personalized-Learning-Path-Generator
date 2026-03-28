@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import helmet from "helmet"
 import cookieParser from "cookie-parser"
 import passport from "./config/passport.js"
+import assessmentRoutes from "./routes/assessment.routes.js"
 // errorHandler is needed right now
 // because app.js uses it at the bottom
 
@@ -81,9 +82,12 @@ app.get("/api/health",(req,res)=>{
 // ================================
 
 // --- active now ---
+// authenication routes
 app.use("/api/auth", authRoutes)
 
+// assesmentroutes
 
+app.use("/api/assessment", assessmentRoutes)
 
 // ================================
 // 404 HANDLER
