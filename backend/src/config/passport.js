@@ -27,11 +27,11 @@ passport.use(
                 if (user) {
                     // user exists — check if they registered with google before
 
-                    if (user.authProvider === "local") {
+                    if (!user.authProvider.includes("google")) {
                         // user registered with email/password before
                         // now trying google with same email
                         // link google to their existing account
-
+                        user.authProvider.push("google")
                         user.googleId = googleId
                         user.authProvider = "google"
                         // user.isEmailVerified = true

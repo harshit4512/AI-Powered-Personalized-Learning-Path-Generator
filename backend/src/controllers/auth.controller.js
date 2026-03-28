@@ -44,7 +44,7 @@ const register = async (req, res) => {
             name,
             email,
             password,
-            authProvider: "local",
+            authProvider: ["local"],
         });
 
         // generate tokens
@@ -106,7 +106,7 @@ const login = async (req, res) => {
             });
         }
 
-        if (user.authProvider === "google") {
+        if (!user.authProvider.includes("local")) {
             return res.status(401).json({
                 success: false,
                 message: "Please login with Google",
