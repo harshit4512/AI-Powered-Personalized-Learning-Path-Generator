@@ -6,27 +6,27 @@ import mongoose from "mongoose";
 // user chooses which one to use
 // ================================
 
-const linkSchema= new mongoose.Schema({
-    url:{
-        type:String,
-        required:true,
-        // example: "https://youtube.com/watch?v=abc"
-    },
+const linkSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true,
+    // example: "https://youtube.com/watch?v=abc"
+  },
 
-    source:{
-        type:String,
-        required:true,
+  source: {
+    type: String,
+    required: true,
 
-       // example: "YouTube" / "MDN" / "freeCodeCamp"
-      // shown as small tag next to link
-    },
+    // example: "YouTube" / "MDN" / "freeCodeCamp"
+    // shown as small tag next to link
+  },
 },
-{
-        _id:false,
-         // no separate ID needed for each link
+  {
+    _id: false,
+    // no separate ID needed for each link
     // links dont get referenced anywhere
     // they just display inside a topic
-    }
+  }
 );
 
 // ================================
@@ -35,18 +35,18 @@ const linkSchema= new mongoose.Schema({
 // ================================
 
 const topicSchema = new mongoose.Schema(
-    {
-        title:{
-            type:String,
-            required:true,
-            // example: "JavaScript Arrays and Objects"
-           // comes directly from GPT
-        },
+  {
+    title: {
+      type: String,
+      required: true,
+      // example: "JavaScript Arrays and Objects"
+      // comes directly from GPT
+    },
 
-        links:{
-            type:[linkSchema],
-            default:[],
-            // array because GPT gives
+    links: {
+      type: [linkSchema],
+      default: [],
+      // array because GPT gives
       // multiple links per topic
       // example:
       // [
@@ -55,55 +55,55 @@ const topicSchema = new mongoose.Schema(
       //   { url: "fcc.org/...",     source: "freeCodeCamp" }
       // ]
       // user picks whichever they prefer
-        },
+    },
 
-        weekNumber:{
-            type:Number,
-            required:true,
-                  // which week this topic belongs to
+    weekNumber: {
+      type: Number,
+      required: true,
+      // which week this topic belongs to
       // example: 1 = Week 1
       // frontend groups topics by weekNumber
-        },
+    },
 
-        dayNumber:{
-            type:Number,
-            required:true,
-            // which day inside that week
+    dayNumber: {
+      type: Number,
+      required: true,
+      // which day inside that week
       // example: weekNumber 1 dayNumber 3
       // means Week 1 Day 3
       // frontend sorts topics by dayNumber
       // inside each week
-        }
-    },
-    {
+    }
+  },
+  {
     _id: true,
     // each topic needs its own unique ID
     // Progress model stores this topicId
     // when user ticks a specific topic
   }
-) ;
+);
 
 
 // ================================
 // MAIN LEARNING PATH SCHEMA
 // ================================
 
-const learningPathSchema= new mongoose.Schema(
-    {
-      // ================================
+const learningPathSchema = new mongoose.Schema(
+  {
+    // ================================
     // LINKS TO OTHER MODELS
     // ================================   
 
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true,
-        // whose learning path is this
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      // whose learning path is this
     },
 
-    assessmentId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "Assessment",
+    assessmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Assessment",
       required: true,
       // which form submission created this path
       // if GPT fails — we know which assessment
@@ -117,22 +117,22 @@ const learningPathSchema= new mongoose.Schema(
     // collection just to show title
     // ================================
 
-    goal:{
-        type:String,
-        required:true,
-        // example: "Full Stack Development"
+    goal: {
+      type: String,
+      required: true,
+      // example: "Full Stack Development"
     },
 
-    targetWeeks:{
-        type:Number,
-        required:true,
-        // example: 8
+    targetWeeks: {
+      type: Number,
+      required: true,
+      // example: 8
     },
 
-    hoursPerDay:{
-        type:Number,
-        required:true,
-        // example: 2
+    hoursPerDay: {
+      type: Number,
+      required: true,
+      // example: 2
     },
 
     // ================================
@@ -141,11 +141,11 @@ const learningPathSchema= new mongoose.Schema(
     // everything GPT returns stored here
     // ================================
 
-    topics :{
-        type:[topicSchema],
-        default:[],
+    topics: {
+      type: [topicSchema],
+      default: [],
 
-        // full roadmap from GPT
+      // full roadmap from GPT
       // each topic has:
       //   title       → what to learn
       //   links       → multiple resources
@@ -175,28 +175,28 @@ const learningPathSchema= new mongoose.Schema(
     // shown on home screen card
     // ================================
 
-    totalTopics:{
-        type:Number,
-        default:0,
-        // set once when GPT returns topics
+    totalTopics: {
+      type: Number,
+      default: 0,
+      // set once when GPT returns topics
       // topics.length stored here
       // shown on card as "12/20 done"
     },
 
-    completedTopics:{
-        type:Number,
-        default:0,
-        // starts at 0
+    completedTopics: {
+      type: Number,
+      default: 0,
+      // starts at 0
       // increments by 1 every time
       // user ticks a topic
       // shown on card as "12/20 done"
     },
 
-    progressPercentage:{
-        type:Number,
-        default:0,
+    progressPercentage: {
+      type: Number,
+      default: 0,
 
-        // formula: completedTopics / totalTopics * 100
+      // formula: completedTopics / totalTopics * 100
       // example: 12/20 * 100 = 60
       // shown as progress bar on card
       // recalculated on every tick
@@ -214,25 +214,25 @@ const learningPathSchema= new mongoose.Schema(
     // Node path   → streak: 0 days
     // ================================
 
-    currentStreak:{
-        type:Number,
-        default:0,
+    currentStreak: {
+      type: Number,
+      default: 0,
 
-       // consecutive days user ticked
+      // consecutive days user ticked
       // at least one topic in THIS path
       // resets to 1 if user misses a day
     },
 
-    longestStreak:{
-        type:Number,
-        default:0,
+    longestStreak: {
+      type: Number,
+      default: 0,
 
-        // highest streak ever on this path
+      // highest streak ever on this path
       // never resets — only goes up
       // updated when currentStreak > longestStreak
     },
 
-     lastActiveDate: {
+    lastActiveDate: {
       type: Date,
       default: null,
       // last date user ticked any topic
@@ -244,7 +244,7 @@ const learningPathSchema= new mongoose.Schema(
       // today - lastActiveDate > 1 day  → missed days, reset to 1
     },
 
-     // ================================
+    // ================================
     // PER PATH BADGES
     // earned specifically for this path
     // ================================
@@ -282,7 +282,7 @@ const learningPathSchema= new mongoose.Schema(
       //               can be re-activated anytime
     },
 
-     completedAt: {
+    completedAt: {
       type: Date,
       default: null,
       // null until all topics are ticked
@@ -290,14 +290,14 @@ const learningPathSchema= new mongoose.Schema(
       // becomes "completed"
     },
 
-    },
-    {
-        timestamps:true,
-         // createdAt → when GPT generated this path
+  },
+  {
+    timestamps: true,
+    // createdAt → when GPT generated this path
     // updatedAt → last time any field changed
-    }
+  }
 );
 
-const LearningPath= mongoose.model("LearningPath",learningPathSchema);
+const LearningPath = mongoose.model("LearningPath", learningPathSchema);
 
 export default LearningPath;
