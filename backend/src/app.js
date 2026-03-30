@@ -5,7 +5,7 @@ import helmet from "helmet"
 import cookieParser from "cookie-parser"
 import passport from "./config/passport.js"
 import assessmentRoutes from "./routes/assessment.routes.js"
-
+import progressRoutes from "./routes/progress.routes.js"
 import pathRoutes from "./routes/path.routes.js"
 // errorHandler is needed right now
 // because app.js uses it at the bottom
@@ -94,7 +94,9 @@ app.use("/api/assessment", assessmentRoutes)
 // pathroutes
 app.use("/api/path", pathRoutes)
 
+// progress routes
 
+app.use("/api/progress",progressRoutes)
 // ================================
 // 404 HANDLER
 // catches any route that doesn't exist
