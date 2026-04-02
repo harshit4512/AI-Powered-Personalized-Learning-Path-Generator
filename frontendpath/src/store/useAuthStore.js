@@ -38,15 +38,15 @@ const useAuthStore = create((set) => ({
     // cookie sent automatically
     // ================================
 
-    checkAuth:async()=>{
-        try{
-            set({isLoading:true})
+    checkAuth: async () => {
+        try {
+            set({ isLoading: true })
             const data = await getMe()
-            set({user:data.user,isLoading:false})
+            set({ user: data.user, isLoading: false })
         }
-        catch(error){
-             // not logged in
-      set({ user: null, isLoading: false })
+        catch (error) {
+            // not logged in
+            set({ user: null, isLoading: false })
         }
     },
 
