@@ -1,4 +1,4 @@
-import getMe from "../api/auth.api"
+import {getMe} from "../api/auth.api"
 import { create } from "zustand"
 
 const useAuthStore = create((set) => ({
