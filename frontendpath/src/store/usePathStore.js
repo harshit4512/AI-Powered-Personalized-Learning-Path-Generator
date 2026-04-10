@@ -1,50 +1,96 @@
-import {create} from "zustand"
+// import {create} from "zustand"
 
-const usePathStore = create((set)=>({
-    // ================================
-  // STATE
+// const usePathStore = create((set)=>({
+//     // ================================
+//   // STATE
+//   // ================================
+
+//    selectedWeek:null,
+
+//    // which week card user clicked
+//   // null means no week selected
+//   // number means that week is open
+
+//    isBottomSheetOpen:false,
+
+//    // controls bottom sheet visibility
+
+//    currentPathId:null,
+//      // which path is currently open
+//   // set when user navigates to PathPage
+
+//   openWeek:(weekNumber)=>
+//     set({
+//         selectedWeek:weekNumber,
+//         isBottomSheetOpen:true,
+//     }),
+
+//     // called when user clicks a week card
+//   // opens bottom sheet for that week
+
+//    closeBottomSheet:()=>
+//     set({
+//         selectedWeek:null,
+//         isBottomSheetOpen:false,
+//     }),
+
+//     setCurrentPathId:(pathId)=>
+//         set({
+//             currentPathId:pathId
+//         }),
+
+//         clearPath:()=>
+//             set({
+//                 selectedWeek:null,
+//                 isBottomSheetOpen:false,
+//                 currentPathId:null,
+//             })
+// }))
+
+// export default usePathStore
+
+import { create } from "zustand"
+
+const usePathStore = create((set) => ({
+
   // ================================
+  // SIDEBAR STATE
+  // ================================
+  isSidebarOpen: false,
 
-   selectedWeek:null,
+  toggleSidebar: (value) =>
+    set((state) => ({
+      isSidebarOpen: value !== undefined ? value : !state.isSidebarOpen,
+    })),
 
-   // which week card user clicked
-  // null means no week selected
-  // number means that week is open
+  // ================================
+  // BOTTOM SHEET STATE
+  // ================================
+  selectedWeek: null,
+  isBottomSheetOpen: false,
+  currentPathId: null,
 
-   isBottomSheetOpen:false,
-
-   // controls bottom sheet visibility
-
-   currentPathId:null,
-     // which path is currently open
-  // set when user navigates to PathPage
-
-  openWeek:(weekNumber)=>
+  openWeek: (weekNumber) =>
     set({
-        selectedWeek:weekNumber,
-        isBottomSheetOpen:true,
+      selectedWeek: weekNumber,
+      isBottomSheetOpen: true,
     }),
 
-    // called when user clicks a week card
-  // opens bottom sheet for that week
-
-   closeBottomSheet:()=>
+  closeBottomSheet: () =>
     set({
-        selectedWeek:null,
-        isBottomSheetOpen:false,
+      selectedWeek: null,
+      isBottomSheetOpen: false,
     }),
 
-    setCurrentPathId:(pathId)=>
-        set({
-            currentPathId:pathId
-        }),
+  setCurrentPathId: (pathId) =>
+    set({ currentPathId: pathId }),
 
-        clearPath:()=>
-            set({
-                selectedWeek:null,
-                isBottomSheetOpen:false,
-                currentPathId:null,
-            })
+  clearPath: () =>
+    set({
+      selectedWeek: null,
+      isBottomSheetOpen: false,
+      currentPathId: null,
+    }),
 }))
 
 export default usePathStore
