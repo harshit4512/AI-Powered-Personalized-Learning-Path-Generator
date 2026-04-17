@@ -20,6 +20,8 @@ const HomePage = () => {
     const fetchPaths = async () => {
       try {
         const data = await getAllPaths()
+        console.log(data);
+        
         setPaths(data.paths || [])
       } catch (err) {
         setError("Failed to load your paths. Please try again.")
@@ -27,8 +29,8 @@ const HomePage = () => {
         setIsLoading(false)
       }
     }
-    fetchPaths()
-  }, [])
+    fetchPaths() 
+  },[])
 
   const handleCreatePath = () => {
     navigate("/onboarding")

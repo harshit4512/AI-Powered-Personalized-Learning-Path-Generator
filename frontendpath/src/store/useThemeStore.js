@@ -1,59 +1,39 @@
-import {create} from "zustand"
+import { create } from "zustand"
 
-// ================================
-// CHECK INITIAL THEME
-// reads from localStorage first
-// falls back to system preference
-// ================================
+const getInitialTheme = () => {
+  const saved = localStorage.getItem("theme")
+  if (saved) return saved === "dark"
 
-const getInitialTheme =()=>{
-    const saved =localStorage.getItem("theme")
-    if(saved) return saved ==="dark"
-    return wiindow.matchMedia("(prefer-color-scheme:dark)").matches
-}
-    // ================================
-// APPLY THEME TO HTML ELEMENT
-// tailwind watches class on <html>
-// ================================
-
-const applyTheme =(isDark)=>{
-    const root=document.documentElement
-
-    if(isDark){
-        root.classList.add("dark")
-        localStorage.setItem("theme","dark")
-    }
-    else{
-        root.classList.remove("dark")
-        localStorage.setItem("theme","light")
-    }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
-const useThemeStore = create((set)=>({
-      // ================================
-  // STATE
-  // ================================
+const applyTheme = (isDark) => {
+  const root = document.documentElement
+  if (isDark) {
+    root.classList.add("dark")
+    localStorage.setItem("theme", "dark")
+  } else {
+    root.classList.remove("dark")
+    localStorage.setItem("theme", "light")
+  }
+}
 
-  isDark:getInitialTheme(),
+const useThemeStore = create((set) => ({
+  isDark: false, // ⚠️ DON'T call getInitialTheme here
 
-    // ================================
-  // ACTIONS
-  // ================================
+  initTheme: () => {
+    const isDark = getInitialTheme()
+    applyTheme(isDark)
+    set({ isDark })
+  },
 
-  toggleTheme:()=>set((state)=>{
-      const newIsDark=!state.isDark
+  toggleTheme: () =>
+    set((state) => {
+      const newIsDark = !state.isDark
       applyTheme(newIsDark)
-      return {isDark:newIsDark}
-  }),
-
-   // call this once on app load
-  // to apply saved theme immediately
-
-  initTheme:()=>set((state)=>{
-    applyTheme(state.isDark)
-    return {}
-  }),
+      console.log("Theme changed:", newIsDark)
+      return { isDark: newIsDark }
+    }),
 }))
-
 
 export default useThemeStore

@@ -94,7 +94,10 @@ const progressSchema = new mongoose.Schema(
 // we always query by userId + learningPathId
 // ================================
 
-progressSchema.index({userId:1,learningPathId:1});
+progressSchema.index(
+  { userId: 1, LearningPathId: 1, topicId: 1 },
+  { unique: true }
+);
 
 const Progress = mongoose.model("Progress",progressSchema)
 

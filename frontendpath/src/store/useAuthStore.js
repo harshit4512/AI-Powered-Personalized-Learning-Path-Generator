@@ -43,6 +43,8 @@ const useAuthStore = create((set) => ({
             set({ isLoading: true })
             const data = await getMe()
             set({ user: data.user, isLoading: false })
+            console.log(data.user);
+            
         }
         catch (error) {
             // not logged in

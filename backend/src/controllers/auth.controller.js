@@ -131,10 +131,13 @@ const login = async (req, res) => {
         // set cookies
         setTokenCookies(res, accessToken, refreshToken);
 
+        // console.log(user.isonbor);
+        
         return res.status(200).json({
             success: true,
             message: "Logged in successfully",
             user: user.toSafeObject(),
+
         });
     }
     catch (error) {
@@ -240,9 +243,12 @@ const getMe = async (req, res) => {
         });
 
     } catch (error) {
+            console.log(error.message);
+
         return res.status(500).json({
             success: false,
             message: error.message,
+            
         });
     }
 };
@@ -295,13 +301,11 @@ const googleAuthCallback = async (req, res) => {
         // redirect to frontend dashboard
         // google auth always redirects
         // cannot send JSON response here
-        return res.status(200).json({
-            success: true,
-            message: "Google login successful",
-            accessToken,
-            refreshToken,
-            user
-        })
+        // console.log(user.isOnboardingComplete);
+        
+       return res.redirect(
+  `${process.env.CLIENT_URI}/authsuccess`
+)
 
     }
     catch (error) {

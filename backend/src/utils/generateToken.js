@@ -30,7 +30,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
         // only send over HTTPS in production
         // HTTP is fine in development
 
-        sameSite: "none",
+        sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
         // cookie only sent to same site
         // prevents CSRF attacks
 
@@ -41,7 +41,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: Number(process.env.REFRESH_TOKEN_COOKIE_EXPIRES) * 24 * 60 * 60 * 1000,
     })
 

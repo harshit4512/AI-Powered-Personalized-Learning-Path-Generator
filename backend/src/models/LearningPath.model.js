@@ -214,51 +214,51 @@ const learningPathSchema = new mongoose.Schema(
     // Node path   → streak: 0 days
     // ================================
 
-    currentStreak: {
-      type: Number,
-      default: 0,
+    // currentStreak: {
+    //   type: Number,
+    //   default: 0,
 
-      // consecutive days user ticked
-      // at least one topic in THIS path
-      // resets to 1 if user misses a day
-    },
+    //   // consecutive days user ticked
+    //   // at least one topic in THIS path
+    //   // resets to 1 if user misses a day
+    // },
 
-    longestStreak: {
-      type: Number,
-      default: 0,
+    // longestStreak: {
+    //   type: Number,
+    //   default: 0,
 
-      // highest streak ever on this path
-      // never resets — only goes up
-      // updated when currentStreak > longestStreak
-    },
+    //   // highest streak ever on this path
+    //   // never resets — only goes up
+    //   // updated when currentStreak > longestStreak
+    // },
 
-    lastActiveDate: {
-      type: Date,
-      default: null,
-      // last date user ticked any topic
-      // in this specific path
-      //
-      // streak calculation:
-      // today - lastActiveDate = 0 days → same day, no change
-      // today - lastActiveDate = 1 day  → consecutive, increment
-      // today - lastActiveDate > 1 day  → missed days, reset to 1
-    },
+    // lastActiveDate: {
+    //   type: Date,
+    //   default: null,
+    //   // last date user ticked any topic
+    //   // in this specific path
+    //   //
+    //   // streak calculation:
+    //   // today - lastActiveDate = 0 days → same day, no change
+    //   // today - lastActiveDate = 1 day  → consecutive, increment
+    //   // today - lastActiveDate > 1 day  → missed days, reset to 1
+    // },
 
-    // ================================
-    // PER PATH BADGES
-    // earned specifically for this path
-    // ================================
-    badges: {
-      type: [String],
-      default: [],
-      // badges earned on THIS path only
-      //
-      // "first_topic"   → ticked very first topic
-      // "halfway"       → 50% topics completed
-      // "seven_streak"  → 7 consecutive days
-      // "thirty_streak" → 30 consecutive days
-      // "completed"     → all topics ticked
-    },
+    // // ================================
+    // // PER PATH BADGES
+    // // earned specifically for this path
+    // // ================================
+    // badges: {
+    //   type: [String],
+    //   default: [],
+    //   // badges earned on THIS path only
+    //   //
+    //   // "first_topic"   → ticked very first topic
+    //   // "halfway"       → 50% topics completed
+    //   // "seven_streak"  → 7 consecutive days
+    //   // "thirty_streak" → 30 consecutive days
+    //   // "completed"     → all topics ticked
+    // },
 
     // ================================
     // PATH STATUS

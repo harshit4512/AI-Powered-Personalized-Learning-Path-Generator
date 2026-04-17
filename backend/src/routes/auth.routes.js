@@ -35,4 +35,5 @@ router.get(
   }),
   googleAuthCallback
 )
+
 export default router;

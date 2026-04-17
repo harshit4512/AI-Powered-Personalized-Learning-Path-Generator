@@ -14,7 +14,9 @@ import LearningPath from "../models/LearningPath.model.js"
 const generatePath = async (req, res) => {
     try {
         const { assessmentId } = req.body
-
+        
+        
+        
         if (!assessmentId) {
             return res.status(400).json({
                 success: false,
@@ -77,6 +79,8 @@ const generatePath = async (req, res) => {
         })
     }
     catch (error) {
+        console.log(error.message);
+        
         // if GPT fails — return clear error
         // assessment is NOT marked as generated
         // so user can retry without refilling form

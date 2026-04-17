@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
        // sparse true means multiple users
       // can have null googleId without conflict
     },
+    isOnboardingComplete: {
+    type: Boolean,
+    default: false
+  },
 
     authProvider:{
         type:[String],

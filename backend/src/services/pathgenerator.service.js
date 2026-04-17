@@ -189,7 +189,7 @@ Phase 5 - Orchestration:
 const generateLearningPath = async ({ goal, targetWeeks, hoursPerDay }) => {
      // get the roadmap structure for this goal
   const roadmapStructure = goalRoadmaps[goal] || ""
-  
+
  const prompt = `
 You are an expert learning path generator.
 
@@ -316,133 +316,6 @@ Important: Only generate topics that are truly necessary to learn ${goal}. Quali
 
   return topics
 }
-//     const prompt = `You are an expert learning path generator.
-
-// Generate a detailed day-by-day learning path for the following:
-
-// Goal: ${goal}
-// Duration: ${targetWeeks} weeks (${totalDays} days)
-// Hours per day: ${hoursPerDay} hours
-
-
-// STRICT RULES:
-// 1. Return ONLY a valid JSON array. No explanation. No markdown. No code blocks. No extra text before or after the array.
-// 2. Each day should have exactly ONE topic to study.
-// 3. Topics must be ordered from absolute beginner to advanced.
-// 4. Each topic must have 2 to 3 real working links from YouTube, MDN, freeCodeCamp, official docs, or javascript.info.
-// 5. Week numbers start from 1. Day numbers restart from 1 for each new week.
-// 6. Cover all important concepts needed to fully achieve the goal.
-
-// Return ONLY this exact JSON structure with no extra text:
-// [
-//   {
-//     "title": "topic name here",
-//     "weekNumber": 1,
-//     "dayNumber": 1,
-//     "links": [
-//       {
-//         "url": "https://www.youtube.com/watch?v=...",
-//         "source": "YouTube"
-//       },
-//       {
-//         "url": "https://developer.mozilla.org/...",
-//         "source": "MDN"
-//       }
-//     ]
-//   }
-// ]
-
-// Generate exactly ${totalDays} topic objects covering ${goal} completely from scratch to advanced.
-// `
-//     // ================================
-//     // CALL GROQ
-//     // ================================
-
-//     const response = await groq.chat.completions.create({
-//         model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
-
-//         messages: [
-//             {
-//                 role: "system",
-//                 content: "You are a learning path generator. You only respond with valid JSON arrays. Never include markdown, code blocks, backticks, or any explanation in your response. Start your response directly with [ and end with ].",
-//             },
-//             {
-//                 role: "user",
-//                 content: prompt,
-//             }
-//         ],
-//         temperature: 0.7,
-//         max_tokens: 8000
-//     })
-
-//     // ================================
-//     // PARSE RESPONSE
-//     // ================================
-
-//     const rawResponse = response.choices[0].message.content.trim()
-    
-    
-    
-//     // clean any accidental markdown
-//     // groq sometimes adds these even when told not to
-
-//     const cleanedResponse = rawResponse
-//         .replace(/```json/gi, "")
-//         .replace(/```/g, "")
-//         .trim()
-
-//     // parse JSON safely
-     
-    
-    
-//     let topics
-
-//     try {
-//         topics = JSON.parse(cleanedResponse)
-//     }
-//     catch (parseError) {
-//         // if parsing fails throw clear error
-//         // so controller catches it
-//         console.log(parseError);
-
-//         throw new Error(
-//             "Failed to parse GPT response as JSON. Please try again."
-//         )
-//     }
-
-
-//     // validate it is an array
-//     if (!Array.isArray(topics)) {
-//         throw new Error("Response is not a valid array. Please try again.")
-//     }
-
-//     const validatedTopics = topics.map((topic, index) => {
-//         if (!topic.title) {
-//             throw new Error(`Topic at index ${index} is missing title`)
-//         }
-//         if (!topic.weekNumber || !topic.dayNumber) {
-//             throw new Error(
-//                 `Topic at index ${index} is missing weekNumber or dayNumber`
-//             )
-//         }
-
-//         if (!Array.isArray(topic.links) || topic.links.length === 0) {
-//             throw new Error(`Topic at index ${index} has no links`)
-//         }
-
-//         return {
-//             title: topic.title,
-//             weekNumber: Number(topic.weekNumber),
-//             dayNumber: Number(topic.dayNumber),
-//             links: topic.links.map((link) => ({
-//                 url: link.url || "",
-//                 source: link.source || "Resource",
-//             }))
-//         }
-//     })
-
-//     return validatedTopics
-// }
 
 
 export {

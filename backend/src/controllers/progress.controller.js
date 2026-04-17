@@ -46,52 +46,72 @@ const tickTopic = async (req, res) => {
         // check if already ticked
         const alreadyTicked = await Progress.findOne({
             userId: req.user._id,
-            learningPathId: pathId,
+            LearningPathId: pathId,
             topicId
         })
 
         if (alreadyTicked) {
-            return res.status(400).json({
-                success: false,
-                message: "Topic already completed",
-            })
+            return res.status(200).json({
+                success: true,
+                message: "Already ticked"
+            });
         }
 
-        await Progress.create({
+         await Progress.create({
             userId: req.user._id,
-            learningPathId: pathId,
+            LearningPathId: pathId,
             topicId,
             topicTitle: topic.title,
             weekNumber: topic.weekNumber,
             dayNumber: topic.dayNumber,
         })
 
+        
         // update completed count and percentage
 
-        const newCompletedTopics = learningPath.completedTopics + 1
-        const newProgressPercentage = Math.round(
-            (newCompletedTopics / learningPath.totalTopics) * 100
-        )
+        // const newCompletedTopics = learningPath.completedTopics + 1
+        // const newProgressPercentage = Math.round(
+        //     (newCompletedTopics / learningPath.totalTopics) * 100
+        // )
 
-        learningPath.completedTopics = newCompletedTopics
-        learningPath.progressPercentage = newProgressPercentage
+        // learningPath.completedTopics = newCompletedTopics
+        // learningPath.progressPercentage = newProgressPercentage
+
+        // count from DB (source of truth)
+        const completedCount = await Progress.countDocuments({
+            userId: req.user._id,
+            LearningPathId: pathId,
+        });
+
+        // calculate percentage
+        const calculatedPercentage = Math.round(
+            (completedCount / learningPath.totalTopics) * 100
+        );
+
+        const newProgressPercentage = Math.min(100, calculatedPercentage);
+
+        // update path
+        learningPath.completedTopics = completedCount;
+        learningPath.progressPercentage = newProgressPercentage;
 
         await learningPath.save()
 
         return res.status(200).json({
-            success:true,
+            success: true,
             message: "Topic marked as complete",
             data: {
-                completedTopics: newCompletedTopics,
+                completedTopics: completedCount,
                 totalTopics: learningPath.totalTopics,
                 progressPercentage: newProgressPercentage,
                 isPathCompleted:
-                    newCompletedTopics === learningPath.totalTopics
+                    completedCount === learningPath.totalTopics
             },
         })
     }
     catch (error) {
+        console.log(error);
         return res.status(500).json({
+
             success: false,
             message: error.message,
         })
@@ -122,7 +142,7 @@ const untickTopic = async (req, res) => {
 
         const progressRecord = await Progress.findOne({
             userId: req.user._id,
-            learningPath: pathId,
+            LearningPathId: pathId,
             topicId,
         })
 
@@ -149,17 +169,30 @@ const untickTopic = async (req, res) => {
             })
         }
 
-        const newCompletedTopics = Math.max(
-            0,
-            learningPath.completedTopics - 1
-        )
-        const newProgressPercentage = Math.round(
-            (newCompletedTopics / learningPath.totalTopics) * 100
-        )
+        // const newCompletedTopics = Math.max(
+        //     0,
+        //     learningPath.completedTopics - 1
+        // )
+        // const newProgressPercentage = Math.round(
+        //     (newCompletedTopics / learningPath.totalTopics) * 100
+        // )
 
-        learningPath.completedTopics = newCompletedTopics
-        learningPath.progressPercentage = newProgressPercentage
+        // learningPath.completedTopics = newCompletedTopics
+        // learningPath.progressPercentage = newProgressPercentage
 
+        const completedCount = await Progress.countDocuments({
+            userId: req.user._id,
+            LearningPathId: pathId,
+        });
+
+        const calculatedPercentage = Math.round(
+            (completedCount / learningPath.totalTopics) * 100
+        );
+
+        const newProgressPercentage = Math.min(100, calculatedPercentage);
+
+        learningPath.completedTopics = completedCount;
+        learningPath.progressPercentage = newProgressPercentage;
         // revert completed status if unticked
         if (learningPath.status === "completed") {
             learningPath.status = "active"
@@ -172,7 +205,7 @@ const untickTopic = async (req, res) => {
             success: true,
             message: "Topic unmarked successfully",
             data: {
-                completedTopics: newCompletedTopics,
+                completedTopics: completedCount,
                 totalTopics: learningPath.totalTopics,
                 progressPercentage: newProgressPercentage,
             },
@@ -193,32 +226,71 @@ const untickTopic = async (req, res) => {
 // to know which checkboxes to tick
 // ================================
 
+// const getCompletedTopics = async (req, res) => {
+//     try {
+//         const { pathId } = req.params
+//         console.log(pathId);
+
+//         const completedTopics = await Progress.find({
+//             userId: req.user._id,
+//             LearningPathId: pathId,
+//         }).select("topicId topicTitle weekNumber dayNumber completedAt")
+
+//         console.log(completedTopics);
+
+//         const completedTopicsIds = completedTopics.map(
+//             (p) => p.topicId.toString()
+//         )
+//         return res.status(200).json({
+//             success: true,
+//             completedTopicsIds,
+//             completedTopics,
+//         })
+
+//     } catch (error) {
+//         return res.status(500).json({
+//             success: false,
+//             message: error.message,
+//         })
+//     }
+// }
 const getCompletedTopics = async (req, res) => {
     try {
-        const { pathId } = req.params
+        const { pathId } = req.params;
 
         const completedTopics = await Progress.find({
             userId: req.user._id,
-            learningPathId: pathId,
-        }).select("topicId topicTitle weekNumber dayNumber completedAt")
+            LearningPathId: pathId,
+        })
+        .select("topicId topicTitle weekNumber dayNumber completedAt")
+        .sort({ completedAt: -1 }); // optional but good
 
-        const completedTopicsIds = completedTopics.map(
+        // ✅ remove duplicates (IMPORTANT SAFETY)
+        const uniqueMap = new Map();
+
+        completedTopics.forEach((p) => {
+            uniqueMap.set(p.topicId.toString(), p);
+        });
+
+        const uniqueTopics = Array.from(uniqueMap.values());
+
+        const completedTopicsIds = uniqueTopics.map(
             (p) => p.topicId.toString()
-        )
+        );
+
         return res.status(200).json({
             success: true,
             completedTopicsIds,
-            completedTopics,
-        })
+            completedTopics: uniqueTopics,
+        });
 
     } catch (error) {
         return res.status(500).json({
             success: false,
             message: error.message,
-        })
+        });
     }
-}
-
+};
 
 // ================================
 // GET PATH STATS
@@ -226,42 +298,90 @@ const getCompletedTopics = async (req, res) => {
 // shows progress bar data
 // ================================
 
+// const getPathStats = async (req, res) => {
+//     try {
+//         const { pathId } = req.params
+
+//         const learningPath = await LearningPath.findOne({
+//             _id: pathId,
+//             userId: req.user._id,
+//         }).select(
+//             "goal totalTopics completedTopics progressPercentage status"
+//         )
+
+//         if (!learningPath) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Learning path not found",
+//             })
+//         }
+
+//         return res.status(200).json({
+//             success: true,
+//             stats: {
+//                 goal: learningPath.goal,
+//                 totalTopics: learningPath.totalTopics,
+//                 completedTopics: learningPath.completedTopics,
+//                 progressPercentage: learningPath.progressPercentage,
+//                 status: learningPath.status,
+//             },
+//         })
+//     }
+//     catch (error) {
+//         return res.status(500).json({
+//             success: false,
+//             message: error.message,
+//         })
+//     }
+// }
+
+
 const getPathStats = async (req, res) => {
     try {
-        const { pathId } = req.params
+        const { pathId } = req.params;
 
         const learningPath = await LearningPath.findOne({
             _id: pathId,
             userId: req.user._id,
-        }).select(
-            "goal totalTopics completedTopics progressPercentage status"
-        )
+        }).select("goal totalTopics status");
 
         if (!learningPath) {
             return res.status(404).json({
                 success: false,
                 message: "Learning path not found",
-            })
+            });
         }
+
+        // ✅ calculate from DB
+        const completedCount = await Progress.countDocuments({
+            userId: req.user._id,
+            LearningPathId: pathId,
+        });
+
+        const calculatedPercentage = Math.round(
+            (completedCount / learningPath.totalTopics) * 100
+        );
+
+        const safePercentage = Math.min(100, calculatedPercentage);
 
         return res.status(200).json({
             success: true,
             stats: {
                 goal: learningPath.goal,
                 totalTopics: learningPath.totalTopics,
-                completedTopics: learningPath.completedTopics,
-                progressPercentage: learningPath.progressPercentage,
+                completedTopics: completedCount,
+                progressPercentage: safePercentage,
                 status: learningPath.status,
             },
-        })
-    }
-    catch (error) {
+        });
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: error.message,
-        })
+        });
     }
-}
+};
+
 
 export {
     tickTopic,

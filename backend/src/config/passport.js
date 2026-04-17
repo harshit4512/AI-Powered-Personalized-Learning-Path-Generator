@@ -33,7 +33,7 @@ passport.use(
                         // link google to their existing account
                         user.authProvider.push("google")
                         user.googleId = googleId
-                        user.authProvider = "google"
+                        
                         // user.isEmailVerified = true
 
                         await user.save({ validateBeforeSave: false })
@@ -49,7 +49,7 @@ passport.use(
                     name,
                     email,
                     googleId,
-                    authProvider: "google",
+                    authProvider: ["google"],
                     // google users are auto verified
                 })
                 return done(null, user)
