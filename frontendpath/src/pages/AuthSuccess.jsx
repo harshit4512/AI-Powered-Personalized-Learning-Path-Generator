@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import useAuthStore from "../store/useAuthStore"
 import { getMe } from "../api/auth.api.js"
-
+import { getAllPaths } from "../api/path.api.js"
 const AuthSuccess = () => {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
@@ -11,15 +11,19 @@ const AuthSuccess = () => {
     const fetchUser = async () => {
       try {
         const data = await getMe()
-
         // save user in store
         login(data.user)
-
+        // console.log(data.user);
+        
+        const allpath=await getAllPaths()
+//  console.log(allpath);
+ 
         // redirect based on onboarding
-        if (!data.user.isOnboardingComplete) {
+        if(allpath.count>0){
+           navigate("/home")
+        }
+        else{
           navigate("/onboarding")
-        } else {
-          navigate("/home")
         }
       } catch (err) {
         navigate("/login") // fallback if something fails

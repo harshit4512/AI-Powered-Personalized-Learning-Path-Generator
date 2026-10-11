@@ -38,45 +38,6 @@ const [stats, setStats] = useState(null);
   const setCurrentPathId = usePathStore((state) => state.setCurrentPathId)
   const clearPath = usePathStore((state) => state.clearPath)
 
-  // console.log(groupedWeeks);
-
-  // fetch path and progress on mount
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setIsLoading(true)
-
-  //       // fetch both in parallel
-  //       const [pathData, progressData] = await Promise.all([
-  //         getPath(pathId),
-  //         getCompletedTopics(pathId),
-  //       ])
-
-  //       const fetchedPath = pathData.path
-  //       setPath(fetchedPath)
-
-  //       // group topics by week
-  //       const grouped = groupByWeek(fetchedPath.topics)
-  //       setGroupedWeeks(grouped)
-
-  //       // store completed topic ids
-  //       setCompletedTopicIds(progressData.completedTopicIds || [])
-
-  //       // set current path in store
-  //       setCurrentPathId(pathId)
-
-  //     } catch (err) {
-  //       setError("Failed to load this path. Please try again.")
-  //     } finally {
-  //       setIsLoading(false)
-  //     }
-  //   }
-
-  //   fetchData()
-
-  //   // cleanup on unmount
-  //   return () => clearPath()
-  // }, [pathId])
 
   useEffect(() => {
   const fetchData = async () => {

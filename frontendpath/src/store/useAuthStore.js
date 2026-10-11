@@ -21,7 +21,7 @@ const useAuthStore = create((set) => ({
         user: userData,
         isLoading: false,
     }),
-
+    
     logout: () => set({
         user: null,
         isLoading: false
@@ -43,7 +43,7 @@ const useAuthStore = create((set) => ({
             set({ isLoading: true })
             const data = await getMe()
             set({ user: data.user, isLoading: false })
-            console.log(data.user);
+            // console.log(data.user);
             
         }
         catch (error) {

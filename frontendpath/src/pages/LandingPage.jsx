@@ -702,7 +702,7 @@ const LandingPage = () => {
           <p className="
             text-xs text-zinc-400 dark:text-zinc-600
           ">
-            © 2025 PathAI. Built for SIH 2025.
+            © 2026 PathAI. 
           </p>
 
           <div className="flex items-center gap-6">

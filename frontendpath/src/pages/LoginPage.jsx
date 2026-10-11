@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import useAuthStore from "../store/useAuthStore"
 import { login as loginApi } from "../api/auth.api"
 import useThemeStore from "../store/useThemeStore"
+import { getAllPaths } from "../api/path.api"
 
 
 const LoginPage = () => {
@@ -24,13 +25,17 @@ const LoginPage = () => {
     try {
       const data = await loginApi({ email, password })
       login(data.user)
-      console.log(data.user);
-      
 
-      if (!data.user.isOnboardingComplete) {
-        navigate("/onboarding")
-      } else {
+
+      const allpath = await getAllPaths()
+
+
+
+      if(allpath.count>0){
         navigate("/home")
+      }
+      else{
+        navigate("/onboarding")
       }
     } catch (err) {
       setError(
@@ -395,9 +400,9 @@ const LoginPage = () => {
 
             {/* divider */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800"/>
+              <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
               <span className="text-xs text-zinc-400">or continue with</span>
-              <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800"/>
+              <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
             </div>
 
             {/* google button */}
